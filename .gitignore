@@ -1,0 +1,33 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+node_modules/
+dist
+!packages/esbuild-plugins-node-modules-polyfill/dist
+*.local
+/.cache
+/functions/\[\[path\]\].js
+/functions/\[\[path\]\].js.map
+/functions/metafile.*
+/functions/version.txt
+/public/build
+.env
+/.dev.vars
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.wrangler/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.vscode
+# Sentry Config File
+.sentryclirc

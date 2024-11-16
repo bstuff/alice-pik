@@ -1,0 +1,33 @@
+{
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "dev_scripts/generateEndpoint.js"],
+  "exclude": ["functions/**/*", "dev_scripts/**/*"],
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+
+    /* Bundler mode */
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+  },
+}

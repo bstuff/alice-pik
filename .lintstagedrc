@@ -1,0 +1,4 @@
+{
+  "*.{t,j}s{x,}": "prettier --write",
+  "*.{css,md}": "prettier --write"
+}

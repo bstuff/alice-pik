@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:wght@100..900&display=swap');
+/* @import url('daisyui/dist/themes.css'); */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply leading-[normal];
+  }
+}
+
+:root {
+  color-scheme: light dark;
+  color: #000000;
+  background-color: #f3f4f5;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+a {
+  text-decoration: inherit;
+}
+
+body {
+  margin: 0;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* override daisyui */
+:root:has(:is(.modal[open].modal-allow-scroll)) {
+  overflow: auto;
+}
+
+@supports not (color: oklch(0 0 0)) {
+  :root[data-theme='light'] {
+    color-scheme: light;
+    --fallback-p: #0013bc;
+    --fallback-pc: #d4dbff;
+    --fallback-s: #ff41c7;
+    --fallback-sc: #fff9fc;
+    --fallback-a: #00cfbd;
+    --fallback-ac: #00100d;
+    --fallback-n: #2b3440;
+    --fallback-nc: #d7dde4;
+    --fallback-b1: #ffffff;
+    --fallback-b2: #f3f4f5;
+    --fallback-b3: #e5e6e6;
+    --fallback-bc: #1f2937;
+    --fallback-in: #00b3f0;
+    --fallback-inc: #ffffff;
+    --fallback-su: #24b500;
+    --fallback-suc: #000000;
+    --fallback-wa: #ffc22d;
+    --fallback-wac: #000000;
+    --fallback-er: #ea3323;
+    --fallback-erc: #000000;
+  }
+}
+
+:root {
+  --padding-card: 1rem 1rem 1.25rem;
+}
+
+[data-theme='light'] .theme-inverse {
+  color-scheme: dark;
+  --in: 0.7206 0.191 231.6;
+  --su: 67.33% 0.223 141.36;
+  --wa: 0.8471 0.199 83.87;
+  --er: 61.07% 0.22 29.8;
+  --pc: 0.13138 0.0392 275.75;
+  --sc: 0.1496 0.052 342.55;
+  --ac: 0.14902 0.0334 183.61;
+  --p: 0.6569 0.196 275.75;
+  --s: 0.748 0.26 342.55;
+  --a: 0.7451 0.167 183.61;
+  --n: 0.313815 0.021108 254.139175;
+  --nc: 0.746477 0.0216 264.435964;
+  --b1: 19.24% 0.014 298.13;
+  --b2: 0.232607 0.013807 253.100675;
+  --b3: 0.211484 0.01165 254.087939;
+  --bc: 0.975 0 264.435964;
+}
+
+details.click-away[open] summary::before {
+  content: '';
+  position: fixed;
+  display: block;
+  top: -9999px;
+  right: -9999px;
+  bottom: -9999px;
+  left: -9999px;
+  cursor: auto;
+}
