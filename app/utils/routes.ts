@@ -1,4 +1,4 @@
-import { createRouting, segment } from 'ts-routes';
+import { createRouting, query, segment } from 'ts-routes';
 
 export const routes = createRouting({
   alice: {
@@ -20,7 +20,12 @@ export const routes = createRouting({
       },
     },
   },
-  login: segment`/login`,
+  login: {
+    ...segment`/login`,
+    query: {
+      redirect: query('optional'),
+    },
+  },
   services: {
     ...segment`/services`,
     children: {

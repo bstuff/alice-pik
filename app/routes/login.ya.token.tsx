@@ -18,7 +18,7 @@ export const action = (async ({ request }) => {
     throw err;
   }
 
-  return redirect('/', {
+  return redirect(String(formData.get('redirect') || '/'), {
     headers: {
       'Set-Cookie': await accessTokenCookie.serialize(await generateAuthToken(user)),
     },

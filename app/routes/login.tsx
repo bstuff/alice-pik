@@ -48,6 +48,8 @@ export default function LoginPage() {
           form.querySelector<HTMLInputElement>('[name=access_token]')!.value = data.access_token;
           form.querySelector<HTMLInputElement>('[name=token_type]')!.value = data.token_type;
           form.querySelector<HTMLInputElement>('[name=expires_in]')!.value = data.expires_in;
+          form.querySelector<HTMLInputElement>('[name=redirect]')!.value =
+            new URL(window.location.href).searchParams.get('redirect') ?? '/';
 
           console.log('Сообщение с токеном: ', data);
           setInnerHtml(`Сообщение с токеном: ${JSON.stringify(data)}`);
@@ -78,6 +80,7 @@ export default function LoginPage() {
         <input name="access_token" defaultValue="" />
         <input name="token_type" defaultValue="bearer" />
         <input name="expires_in" defaultValue="" />
+        <input name="redirect" defaultValue="" />
         <button>go</button>
       </form>
 

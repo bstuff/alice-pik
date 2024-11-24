@@ -5,6 +5,7 @@ import { getUser } from '~/utils/auth';
 import { sha256 } from '~/utils/crypto';
 import { oauthCodeKvKey } from '~/utils/oauth';
 import { getQueryParams } from '~/utils/queryString';
+import { routes } from '~/utils/routes';
 
 type RequestParams = {
   state: string;
@@ -16,6 +17,15 @@ type RequestParams = {
 export const loader = (async ({ request, context }): Promise<TypedResponse<void>> => {
   const params = getQueryParams<RequestParams>(request.url);
   const user = await getUser({ request, context });
+  if (!user) {
+    const nextUrl = new URL(request.url)
+
+    throw redirect(
+      routes.login(null, {
+        redirect: `${nextUrl.pathname}${nextUrl.search}`,
+      }),
+    );
+  }
   invariant(user);
 
   if (params.response_type !== 'code') {
