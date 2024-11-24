@@ -46,7 +46,7 @@ export class PikRelayDevice extends BaseDevice {
         id: this.id,
         action_result: {
           status: ActionResultStatus.ERROR,
-          error_code: ActionResultErrorCode.INTERNAL_ERROR,
+          error_code: ActionResultErrorCode.DEVICE_UNREACHABLE,
         },
       };
     }
