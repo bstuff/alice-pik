@@ -1,6 +1,7 @@
 import { LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { decode, sign, verify } from '@tsndr/cloudflare-worker-jwt';
-import { JWT_SECRET, JWT_TTL, YA_OAUTH_CLIENT_SECRET } from '~/config.server';
+import { endWith, filter, firstValueFrom, from, map, merge } from 'rxjs';
+import { JWT_REFRESH_TTL, JWT_SECRET, JWT_TTL, YA_OAUTH_CLIENT_SECRET } from '~/config.server';
 import { accessTokenCookie } from '~/cookies.server';
 
 export type UserJwtPayload = {
@@ -23,7 +24,21 @@ export async function generateAuthToken(user: UserJwtPayload) {
       ...user,
       nbf: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + JWT_TTL,
-      iss: 'valuesense-bff',
+      iss: 'alice-pik.pages.dev',
+    },
+    JWT_SECRET,
+  );
+
+  return token;
+}
+
+export async function generateRefreshToken(user: UserJwtPayload) {
+  const token = await sign(
+    {
+      ...user,
+      nbf: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + JWT_REFRESH_TTL,
+      iss: 'alice-pik.pages.dev',
     },
     JWT_SECRET,
   );
@@ -36,6 +51,7 @@ export class WrongTokenError extends Error {}
 
 export async function validateJwtAuthToken(
   token: string,
+  secret = JWT_SECRET,
 ): Promise<[UserJwtPayload, null] | [null, Error]> {
   const now = Math.floor(Date.now() / 1000);
 
@@ -49,7 +65,7 @@ export async function validateJwtAuthToken(
       return [null, new WrongTokenError()];
     }
 
-    const isValid = await verify(token, YA_OAUTH_CLIENT_SECRET);
+    const isValid = await verify(token, secret);
     if (!isValid) {
       return [null, new WrongTokenError()];
     }
@@ -94,23 +110,23 @@ export async function getUser({
   return await (r[KEY_GET_USER] ?? (r[KEY_GET_USER] = getUserImpl(request)));
 }
 
-function isYandexRequest(request: Request) {
-  return request.headers.get('user-agent') === 'Yandex LLC';
-}
+// function isYandexRequest(request: Request) {
+//   return request.headers.get('user-agent') === 'Yandex LLC';
+// }
 
 async function getUserImpl(request: Request): Promise<UserJwtPayload | null> {
-  if (isYandexRequest(request)) {
-    const accessToken = await getAccessTokenFromAuthHeader(request);
-    const apiReq = new Request('https://login.yandex.ru/info?format=jwt', {
-      headers: { authorization: `OAuth ${accessToken}` },
-    });
-    const apiRes = await fetch(apiReq);
-    const jwtString = await apiRes.text();
+  // if (isYandexRequest(request)) {
+  //   const accessToken = await getAccessTokenFromAuthHeader(request);
+  //   const apiReq = new Request('https://login.yandex.ru/info?format=jwt', {
+  //     headers: { authorization: `OAuth ${accessToken}` },
+  //   });
+  //   const apiRes = await fetch(apiReq);
+  //   const jwtString = await apiRes.text();
 
-    const [user] = await validateJwtAuthToken(jwtString);
+  //   const [user] = await validateJwtAuthToken(jwtString, JWT_SECRET);
 
-    return user;
-  }
+  //   return user;
+  // }
   // TODO: Rewrite with rxjs to promise-first-nonNull
   const accessToken = (
     await Promise.all([
@@ -124,9 +140,16 @@ async function getUserImpl(request: Request): Promise<UserJwtPayload | null> {
     return null;
   }
 
-  const [user] = await validateJwtAuthToken(accessToken);
-
-  // request.user = user ?? request.user;
+  const user = await firstValueFrom(
+    merge(
+      from(validateJwtAuthToken(accessToken, JWT_SECRET)),
+      from(validateJwtAuthToken(accessToken, YA_OAUTH_CLIENT_SECRET)),
+    ).pipe(
+      map(([user]) => user),
+      filter((user) => !!user),
+      endWith(null),
+    ),
+  );
 
   return user;
 }

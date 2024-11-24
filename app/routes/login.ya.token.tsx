@@ -1,6 +1,7 @@
 import { ActionFunction, redirect } from '@remix-run/cloudflare';
+import { YA_OAUTH_CLIENT_SECRET } from '~/config.server';
 import { accessTokenCookie } from '~/cookies.server';
-import { validateJwtAuthToken } from '~/utils/auth';
+import { generateAuthToken, validateJwtAuthToken } from '~/utils/auth';
 
 export const action = (async ({ request }) => {
   const formData = await request.formData();
@@ -12,14 +13,14 @@ export const action = (async ({ request }) => {
   const apiRes = await fetch(apiReq);
   const jwtString = await apiRes.text();
 
-  const [user, err] = await validateJwtAuthToken(jwtString);
+  const [user, err] = await validateJwtAuthToken(jwtString, YA_OAUTH_CLIENT_SECRET);
   if (err || !user) {
     throw err;
   }
 
   return redirect('/', {
     headers: {
-      'Set-Cookie': await accessTokenCookie.serialize(jwtString),
+      'Set-Cookie': await accessTokenCookie.serialize(await generateAuthToken(user)),
     },
   });
 }) satisfies ActionFunction;
