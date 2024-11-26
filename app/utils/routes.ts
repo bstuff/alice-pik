@@ -25,8 +25,32 @@ export const routes = createRouting({
     query: {
       redirect: query('optional'),
     },
+    children: {
+      ya: {
+        ...segment`/ya`,
+        query: {
+          redirect: query('optional'),
+        },
+      },
+    },
   },
   logout: segment`/logout`,
+  oauth: {
+    ...segment`/oauth`,
+    children: {
+      ya: {
+        ...segment`/ya`,
+        children: {
+          token: {
+            ...segment`/token`,
+            query: {
+              redirect: query('optional'),
+            },
+          },
+        },
+      },
+    },
+  },
   profile: segment`/profile`,
   services: {
     ...segment`/services`,

@@ -36,7 +36,7 @@ export const loader = (async ({
     const nextUrl = new URL(request.url);
 
     throw redirect(
-      routes.login(null, {
+      routes.login.ya(null, {
         redirect: `${nextUrl.pathname}${nextUrl.search}`,
       }),
     );
@@ -77,7 +77,6 @@ export const action = (async ({ request, context }): Promise<TypedResponse<null>
   nextUrl.searchParams.set('code', code);
 
   return redirect(nextUrl.toString());
-  return json(null);
 }) satisfies ActionFunction;
 
 export default function AuthorizePage() {
@@ -95,7 +94,12 @@ export default function AuthorizePage() {
 
       {/* или */}
       <div className="flex items-center justify-center gap-2">
-        <button className="btn btn-error btn-sm" onClick={() => window.close()}>
+        <button
+          className="btn btn-error btn-sm"
+          onClick={() => {
+            fetch(routes.logout(), { method: 'POST' }).then(() => window.close());
+          }}
+        >
           Запретить
         </button>
         <form action="" method="POST">
