@@ -26,6 +26,8 @@ export const routes = createRouting({
       redirect: query('optional'),
     },
   },
+  logout: segment`/logout`,
+  profile: segment`/profile`,
   services: {
     ...segment`/services`,
     children: {

@@ -11,7 +11,9 @@ export const Header: FC = () => {
       <div className="text-2xl font-black">Домофон</div>
       <div className="flex-1" />
       {user ? (
-        <div className="text-lg font-medium">{user.display_name}</div>
+        <Link className="text-lg font-medium" to={routes.profile()}>
+          {user.display_name}
+        </Link>
       ) : (
         <Link className="btn btn-neutral btn-sm sm:btn-md" to={routes.login()}>
           Login
