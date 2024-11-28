@@ -28,8 +28,8 @@ export const routes = createRouting({
     children: {
       ya: {
         ...segment`/ya`,
-        query: {
-          redirect: query('optional'),
+        children: {
+          token: segment`/token`,
         },
       },
     },
@@ -59,6 +59,26 @@ export const routes = createRouting({
         ...segment`/pik`,
         children: {
           addUser: segment`/add-user`,
+        },
+      },
+    },
+  },
+  ya: {
+    ...segment`/ya`,
+    children: {
+      authorize: {
+        ...segment`/authorize`,
+      },
+      login: {
+        ...segment`/login`,
+        query: {
+          redirect: query('optional'),
+        },
+      },
+      pik: {
+        ...segment`/pik`,
+        query: {
+          redirect: query('optional'),
         },
       },
     },

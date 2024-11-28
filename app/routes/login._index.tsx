@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { ContentContainer } from '~/components/ContentContainer';
 import { YA_OAUTH_CLIENT_ID } from '~/config';
 import { loadScript } from '~/utils/loadScript';
+import { routes } from '~/utils/routes';
 
 export const action = (() => {
   return json(null);
@@ -110,7 +111,7 @@ export default function LoginPage() {
         <form
           className="hidden flex-col gap-2 bg-slate-50"
           method="POST"
-          action="/login/ya/token"
+          action={routes.login.ya.token()}
           ref={formRef}
         >
           <input name="access_token" defaultValue="" />

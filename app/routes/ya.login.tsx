@@ -1,4 +1,4 @@
-import { ActionFunction, json } from '@remix-run/cloudflare';
+import { json, LoaderFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
 import { useMemo } from 'react';
 import { ContentContainer } from '~/components/ContentContainer';
@@ -8,12 +8,12 @@ import { routes } from '~/utils/routes';
 
 export const loader = (async ({ request }) => {
   const params = getQueryParams<{ code?: string; redirect?: string }>(request.url);
-  console.log('>>>', params, request.url)
+  console.log('>>>login', params, request.url);
   return json({
     origin: new URL(request.url).origin.replace(/^http:/, 'https:'),
     redirect: params.redirect,
   });
-}) satisfies ActionFunction;
+}) satisfies LoaderFunction;
 
 export default function LoginYaPage() {
   const loaderData = useLoaderData<typeof loader>();
@@ -24,7 +24,11 @@ export default function LoginYaPage() {
     url.searchParams.set('force_confirm', 'yes');
     url.searchParams.set(
       'redirect_uri',
-      `${loaderData.origin}${routes.oauth.ya.token(null, { redirect: loaderData.redirect })}`,
+      `${loaderData.origin}${routes.oauth.ya.token(null, {
+        redirect: routes.ya.pik(null, {
+          redirect: loaderData.redirect,
+        }),
+      })}`,
     );
 
     return url.toString();
