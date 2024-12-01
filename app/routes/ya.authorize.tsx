@@ -10,6 +10,7 @@ import invariant from 'tiny-invariant';
 import { URL } from 'url';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyDevicesOauthBlock } from '~/components/EmptyDevicesOauthBlock';
+import { getPikToken } from '~/pik-intercom/utils/getPikToken';
 import { getUser } from '~/utils/auth';
 import { sha256 } from '~/utils/crypto';
 import { oauthCodeKvKey } from '~/utils/oauth';
@@ -37,6 +38,7 @@ export const loader = (async ({
   const params = getQueryParams<RequestParams>(request.url);
   const user = await getUser({ request, context });
   if (!user) {
+    debug('No user. Redirecting to login.');
     const nextUrl = new URL(request.url);
 
     throw redirect(
@@ -54,6 +56,19 @@ export const loader = (async ({
         error_description: 'The response_type must be "code".',
       },
       400,
+    );
+  }
+
+  const pikToken = await getPikToken({ request, context });
+
+  if (!pikToken) {
+    debug('No pik token. Redirecting.');
+    const nextUrl = new URL(request.url);
+
+    throw redirect(
+      routes.ya.pik(null, {
+        redirect: `${nextUrl.pathname}${nextUrl.search}`,
+      }),
     );
   }
 
