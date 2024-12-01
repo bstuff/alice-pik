@@ -1,6 +1,8 @@
 import { json, LoaderFunction } from '@remix-run/cloudflare';
 import _debug from 'debug';
 import { ContentContainer } from '~/components/ContentContainer';
+import { PikIntercoms } from '~/pik-intercom/components/PikIntercoms/PikIntercoms';
+import { ClientOnly } from '~/utils/ClientOnly';
 
 const debug = _debug('app:routes:ya:devices');
 
@@ -28,7 +30,11 @@ export default function YaPikPage() {
         </ul>
       </div>
 
-      <div className="mx-auto mt-8 max-w-[600px]"></div>
+      <div className="mx-auto mt-8">
+        <ClientOnly>
+          <PikIntercoms />
+        </ClientOnly>
+      </div>
     </ContentContainer>
   );
 }
