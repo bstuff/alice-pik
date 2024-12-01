@@ -1,15 +1,8 @@
 function authentication(context) {
+  const allowedHosts = (context.env.ALLOWED_HOST || '').split(',').filter(Boolean);
+
   const url = new URL(context.request.url);
-  if (
-    ![
-      // local https
-      'alice.mbp2.y2.bstuff.ru',
-      // local host
-      'localhost',
-      // prod
-      'alice-pik.pages.dev',
-    ].includes(url.hostname)
-  ) {
+  if (allowedHosts.length && !allowedHosts.includes(url.hostname)) {
     return new Response(null, { status: 404 });
   }
 
