@@ -75,6 +75,12 @@ export const routes = createRouting({
           redirect: query('optional'),
         },
       },
+      devices: {
+        ...segment`/devices`,
+        query: {
+          redirect: query('optional'),
+        },
+      },
       pik: {
         ...segment`/pik`,
         query: {
