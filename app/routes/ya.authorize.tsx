@@ -5,6 +5,7 @@ import {
   redirect,
   TypedResponse,
 } from '@remix-run/cloudflare';
+import _debug from 'debug';
 import invariant from 'tiny-invariant';
 import { URL } from 'url';
 import { ContentContainer } from '~/components/ContentContainer';
@@ -14,6 +15,8 @@ import { sha256 } from '~/utils/crypto';
 import { oauthCodeKvKey } from '~/utils/oauth';
 import { getQueryParams } from '~/utils/queryString';
 import { routes } from '~/utils/routes';
+
+const debug = _debug('app:routes:ya:authorize');
 
 type RequestParams = {
   state: string;
@@ -30,7 +33,7 @@ export const loader = (async ({
     //
   }>
 > => {
-  console.log('>>>authorizeGet', request.url);
+  debug('loader', request.url);
   const params = getQueryParams<RequestParams>(request.url);
   const user = await getUser({ request, context });
   if (!user) {
@@ -58,7 +61,7 @@ export const loader = (async ({
 }) satisfies LoaderFunction;
 
 export const action = (async ({ request, context }): Promise<TypedResponse<null>> => {
-  console.log('>>>authorizePost', request.url);
+  debug('action', request.url);
   const params = getQueryParams<RequestParams>(request.url);
   const user = await getUser({ request, context });
   invariant(user);

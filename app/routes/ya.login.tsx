@@ -1,14 +1,17 @@
 import { json, LoaderFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
+import _debug from 'debug';
 import { useMemo } from 'react';
 import { ContentContainer } from '~/components/ContentContainer';
 import { YA_OAUTH_CLIENT_ID } from '~/config';
 import { getQueryParams } from '~/utils/queryString';
 import { routes } from '~/utils/routes';
 
+const debug = _debug('app:routes:ya:login');
+
 export const loader = (async ({ request }) => {
   const params = getQueryParams<{ code?: string; redirect?: string }>(request.url);
-  console.log('>>>login', params, request.url);
+  debug('loader', params, request.url);
   return json({
     origin: new URL(request.url).origin.replace(/^http:/, 'https:'),
     redirect: params.redirect,

@@ -1,6 +1,9 @@
 import { LoaderFunction } from '@remix-run/cloudflare';
 import { json } from '@remix-run/react';
+import _debug from 'debug';
 import { ContentContainer } from '~/components/ContentContainer';
+
+const debug = _debug('app:routes:ya:pik');
 
 // export { PikAddUserPage as default } from '~/pik-intercom/components/PikAddUser/PageAddUser';
 // export { action } from '~/pik-intercom/components/PikAddUser/PageAddUser.action';
@@ -8,7 +11,7 @@ import { ContentContainer } from '~/components/ContentContainer';
 
 export const loader = (async ({ request }) => {
   // const params = getQueryParams<{ code?: string; redirect?: string }>(request.url);
-  console.log('>>>pik', request.url);
+  debug('loader', request.url);
   return json(null);
 }) satisfies LoaderFunction;
 
