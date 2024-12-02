@@ -5,6 +5,7 @@ import {
   redirect,
   TypedResponse,
 } from '@remix-run/cloudflare';
+import { Link, useLoaderData } from '@remix-run/react';
 import _debug from 'debug';
 import invariant from 'tiny-invariant';
 import { URL } from 'url';
@@ -27,24 +28,17 @@ type RequestParams = {
   client_id: string;
 };
 
-export const loader = (async ({
-  request,
-  context,
-}): Promise<
-  TypedResponse<{
-    //
-  }>
-> => {
+export const loader = (async ({ request, context }) => {
   debug('loader', request.url);
   const params = getQueryParams<RequestParams>(request.url);
+  const yaredirect = `${new URL(request.url).pathname}${new URL(request.url).search}`;
   const user = await getUser({ request, context });
   if (!user) {
     debug('No user. Redirecting to login.');
-    const nextUrl = new URL(request.url);
 
     throw redirect(
       routes.ya.login(null, {
-        redirect: `${nextUrl.pathname}${nextUrl.search}`,
+        yaredirect: yaredirect,
       }),
     );
   }
@@ -64,16 +58,17 @@ export const loader = (async ({
 
   if (!pikToken) {
     debug('No pik token. Redirecting.');
-    const nextUrl = new URL(request.url);
 
     throw redirect(
       routes.ya.pik(null, {
-        redirect: `${nextUrl.pathname}${nextUrl.search}`,
+        yaredirect: yaredirect,
       }),
     );
   }
 
-  return json({});
+  return json({
+    yaredirect,
+  });
 }) satisfies LoaderFunction;
 
 export const action = (async ({ request, context }): Promise<TypedResponse<null>> => {
@@ -101,19 +96,39 @@ export const action = (async ({ request, context }): Promise<TypedResponse<null>
 }) satisfies ActionFunction;
 
 export default function AuthorizePage() {
+  const loaderData = useLoaderData<typeof loader>();
+
   return (
     <ContentContainer>
       <h1 className="pt-10 text-center text-2xl">Авторизация</h1>
       <div className="mx-auto mt-6 w-full max-w-[600px]">
         <ul className="steps steps-vertical">
           <li data-content="✅" className="step step-primary">
-            {StepsText.STEP1}
+            <Link
+              to={routes.ya.login(null, {
+                yaredirect: loaderData.yaredirect,
+              })}
+            >
+              {StepsText.STEP1}
+            </Link>
           </li>
           <li data-content="✅" className="step step-primary">
-            {StepsText.STEP2}
+            <Link
+              to={routes.ya.pik(null, {
+                yaredirect: loaderData.yaredirect,
+              })}
+            >
+              {StepsText.STEP2}
+            </Link>
           </li>
           <li data-content="✅" className="step step-primary">
-            {StepsText.STEP3}
+            <Link
+              to={routes.ya.devices(null, {
+                yaredirect: loaderData.yaredirect,
+              })}
+            >
+              {StepsText.STEP3}
+            </Link>
           </li>
           <li className="step step-primary">{StepsText.STEP4}</li>
         </ul>

@@ -11,11 +11,10 @@ import { StepsText } from '~/utils/stepsText';
 const debug = _debug('app:routes:ya:login');
 
 export const loader = (async ({ request }) => {
-  const params = getQueryParams<{ code?: string; redirect?: string }>(request.url);
+  const params = getQueryParams<{ code?: string; yaredirect?: string }>(request.url);
   debug('loader', params, request.url);
   return json({
-    origin: new URL(request.url).origin.replace(/^http:/, 'https:'),
-    redirect: params.redirect,
+    yaredirect: params.yaredirect,
   });
 }) satisfies LoaderFunction;
 
@@ -28,15 +27,15 @@ export default function LoginYaPage() {
     url.searchParams.set('force_confirm', 'yes');
     url.searchParams.set(
       'redirect_uri',
-      `${loaderData.origin}${routes.oauth.ya.token(null, {
+      `${window.location.origin}${routes.oauth.ya.token(null, {
         redirect: routes.ya.pik(null, {
-          redirect: loaderData.redirect,
+          yaredirect: loaderData.yaredirect,
         }),
       })}`,
     );
 
     return url.toString();
-  }, [loaderData.origin, loaderData.redirect]);
+  }, [loaderData.yaredirect]);
 
   return (
     <ContentContainer>

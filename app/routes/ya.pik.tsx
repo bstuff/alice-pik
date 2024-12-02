@@ -1,18 +1,19 @@
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/cloudflare';
-import { useActionData } from '@remix-run/react';
+import { Link, useActionData, useLoaderData } from '@remix-run/react';
 import _debug from 'debug';
 import { ContentContainer } from '~/components/ContentContainer';
 import { filterPhone } from '~/pik-intercom/utils/filterPhone';
 import { newPikToken } from '~/pik-intercom/utils/newPikToken';
 import { storePikToken } from '~/pik-intercom/utils/storePikToken';
 import { getUser } from '~/utils/auth';
+import { getQueryParams } from '~/utils/queryString';
 import { routes } from '~/utils/routes';
 import { StepsText } from '~/utils/stepsText';
 
 const debug = _debug('app:routes:ya:pik');
 
 export const action = (async ({ request, context }) => {
-  // const params = getQueryParams<{ code?: string; redirect?: string }>(request.url);
+  const params = getQueryParams<{ yaredirect?: string }>(request.url);
   debug('action', request.url);
   const user = await getUser({ request, context });
   if (!user) {
@@ -30,11 +31,9 @@ export const action = (async ({ request, context }) => {
   if (pikToken) {
     await storePikToken(context, user.uid, pikToken);
 
-    const nextUrl = new URL(request.url);
-
     throw redirect(
       routes.ya.devices(null, {
-        redirect: `${nextUrl.pathname}${nextUrl.search}`,
+        yaredirect: params.yaredirect,
       }),
     );
   }
@@ -43,12 +42,14 @@ export const action = (async ({ request, context }) => {
 }) satisfies ActionFunction;
 
 export const loader = (async ({ request }) => {
-  // const params = getQueryParams<{ code?: string; redirect?: string }>(request.url);
+  const params = getQueryParams<{ yaredirect?: string }>(request.url);
   debug('loader', request.url);
-  return json(null);
+
+  return json({ yaredirect: params.yaredirect });
 }) satisfies LoaderFunction;
 
 export default function YaPikPage() {
+  const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   return (
@@ -58,7 +59,13 @@ export default function YaPikPage() {
       <div className="mx-auto mt-8 w-full max-w-[600px]">
         <ul className="steps steps-vertical">
           <li data-content="✅" className="step step-primary">
-            {StepsText.STEP1}
+            <Link
+              to={routes.ya.login(null, {
+                yaredirect: loaderData.yaredirect,
+              })}
+            >
+              {StepsText.STEP1}
+            </Link>
           </li>
           <li className="step step-primary">{StepsText.STEP2}</li>
           <li className="step">{StepsText.STEP3}</li>

@@ -72,19 +72,19 @@ export const routes = createRouting({
       login: {
         ...segment`/login`,
         query: {
-          redirect: query('optional'),
+          yaredirect: query('optional'),
         },
       },
       devices: {
         ...segment`/devices`,
         query: {
-          redirect: query('optional'),
+          yaredirect: query('optional'),
         },
       },
       pik: {
         ...segment`/pik`,
         query: {
-          redirect: query('optional'),
+          yaredirect: query('optional'),
         },
       },
     },
