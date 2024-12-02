@@ -1,9 +1,11 @@
 import { json, LoaderFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import _debug from 'debug';
-import { Suspense } from 'react';
+import { FC, Suspense } from 'react';
 import { ContentContainer } from '~/components/ContentContainer';
 import { PikIntercoms } from '~/pik-intercom/components/PikIntercoms/PikIntercoms';
+import { pikStoredRelaysQuery } from '~/pik-intercom/components/PikIntercoms/pikIntercomsQuery';
 import { ClientOnly } from '~/utils/ClientOnly';
 import { getQueryParams } from '~/utils/queryString';
 import { routes } from '~/utils/routes';
@@ -50,15 +52,39 @@ export default function YaPikPage() {
         </ul>
       </div>
 
-      <div className="mx-auto mt-8">
+      <div className="relative mx-auto mt-8">
         <ClientOnly>
+          <div className="my-4">Добавьте хотя бы 1 устройство:</div>
           <Suspense fallback={<div className="loading" />}>
             <PikIntercoms />
           </Suspense>
         </ClientOnly>
+
+        <div className="sticky bottom-0 col-span-full flex h-0 w-full justify-end pb-5">
+          <Suspense fallback={<div className="loading" />}>
+            <ButtonNext yaredirect={loaderData.yaredirect} />
+          </Suspense>
+        </div>
       </div>
 
       <div className="h-6" />
     </ContentContainer>
   );
 }
+
+const ButtonNext: FC<{ yaredirect?: string }> = ({ yaredirect }) => {
+  const storedRelays = useSuspenseQuery(pikStoredRelaysQuery()).data;
+
+  if (!yaredirect || storedRelays.storedRelays.length === 0) {
+    return null;
+  }
+  return (
+    <div className="">
+      <div className="-translate-y-full">
+        <Link className="btn btn-primary btn-md" to={yaredirect}>
+          Далее
+        </Link>
+      </div>
+    </div>
+  );
+};
