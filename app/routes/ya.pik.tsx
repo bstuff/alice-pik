@@ -2,10 +2,12 @@ import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/cloud
 import { useActionData } from '@remix-run/react';
 import _debug from 'debug';
 import { ContentContainer } from '~/components/ContentContainer';
+import { filterPhone } from '~/pik-intercom/utils/filterPhone';
 import { newPikToken } from '~/pik-intercom/utils/newPikToken';
 import { storePikToken } from '~/pik-intercom/utils/storePikToken';
 import { getUser } from '~/utils/auth';
 import { routes } from '~/utils/routes';
+import { StepsText } from '~/utils/stepsText';
 
 const debug = _debug('app:routes:ya:pik');
 
@@ -19,7 +21,7 @@ export const action = (async ({ request, context }) => {
 
   const requestData = await request.formData();
   const pikToken = await newPikToken(
-    requestData.get('login') as string,
+    filterPhone(requestData.get('login') as string),
     requestData.get('password') as string,
   );
 
@@ -56,11 +58,11 @@ export default function YaPikPage() {
       <div className="mx-auto mt-8 w-full max-w-[600px]">
         <ul className="steps steps-vertical">
           <li data-content="✅" className="step step-primary">
-            Шаг 1: Войти при помощи Яндекс-аккаунта
+            {StepsText.STEP1}
           </li>
-          <li className="step step-primary">Шаг 2: Получение токена для управления устройствами</li>
-          <li className="step">Шаг 3: Выбор устройств, доступных в умном доме</li>
-          <li className="step">Шаг 4: Привязка аккаунта к умному дому</li>
+          <li className="step step-primary">{StepsText.STEP2}</li>
+          <li className="step">{StepsText.STEP3}</li>
+          <li className="step">{StepsText.STEP4}</li>
         </ul>
       </div>
 
@@ -79,7 +81,8 @@ export default function YaPikPage() {
               type="text"
               name="login"
               autoComplete="username"
-              pattern="^\+7\d{10}$"
+              // pattern="^\+7\d{10}$"
+              minLength={10}
               placeholder="+79991112233"
               required
             />

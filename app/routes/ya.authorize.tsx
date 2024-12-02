@@ -16,6 +16,7 @@ import { sha256 } from '~/utils/crypto';
 import { oauthCodeKvKey } from '~/utils/oauth';
 import { getQueryParams } from '~/utils/queryString';
 import { routes } from '~/utils/routes';
+import { StepsText } from '~/utils/stepsText';
 
 const debug = _debug('app:routes:ya:authorize');
 
@@ -103,7 +104,22 @@ export default function AuthorizePage() {
   return (
     <ContentContainer>
       <h1 className="pt-10 text-center text-2xl">Авторизация</h1>
-      <div className="text-center">
+      <div className="mx-auto mt-6 w-full max-w-[600px]">
+        <ul className="steps steps-vertical">
+          <li data-content="✅" className="step step-primary">
+            {StepsText.STEP1}
+          </li>
+          <li data-content="✅" className="step step-primary">
+            {StepsText.STEP2}
+          </li>
+          <li data-content="✅" className="step step-primary">
+            {StepsText.STEP3}
+          </li>
+          <li className="step step-primary">{StepsText.STEP4}</li>
+        </ul>
+      </div>
+
+      <div className="mt-6 text-center">
         Разрешить приложению "Умный дом с Алисой" управлять вашими устройствами?
       </div>
 
@@ -128,6 +144,8 @@ export default function AuthorizePage() {
           </button>
         </form>
       </div>
+
+      <div className="h-6" />
     </ContentContainer>
   );
 }

@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from '@remix-run/cloudflare';
-import { getTokenKvKey } from './kvKeys';
+import { getTokenKvKey, pikRelaysKey } from './kvKeys';
 import { newPikToken } from './newPikToken';
 
 export async function storePikToken(
@@ -7,7 +7,11 @@ export async function storePikToken(
   userId: number,
   token: NonNullable<Awaited<ReturnType<typeof newPikToken>>>,
 ) {
-  return await context.env.USERS.put(getTokenKvKey(userId), token.authHeader!, {
+  const res = await context.env.USERS.put(getTokenKvKey(userId), token.authHeader!, {
     expiration: token.payload.exp,
   });
+
+  await context.env.USERS.delete(pikRelaysKey(userId));
+
+  return res;
 }

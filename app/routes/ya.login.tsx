@@ -6,6 +6,7 @@ import { ContentContainer } from '~/components/ContentContainer';
 import { YA_OAUTH_CLIENT_ID } from '~/config';
 import { getQueryParams } from '~/utils/queryString';
 import { routes } from '~/utils/routes';
+import { StepsText } from '~/utils/stepsText';
 
 const debug = _debug('app:routes:ya:login');
 
@@ -43,10 +44,10 @@ export default function LoginYaPage() {
 
       <div className="mx-auto mt-8 w-full max-w-[600px]">
         <ul className="steps steps-vertical">
-          <li className="step step-primary">Шаг 1: Войти при помощи Яндекс-аккаунта</li>
-          <li className="step">Шаг 2: Получение токена для управления устройствами</li>
-          <li className="step">Шаг 3: Выбор устройств, доступных в умном доме</li>
-          <li className="step">Шаг 4: Привязка аккаунта к умному дому</li>
+          <li className="step step-primary">{StepsText.STEP1}</li>
+          <li className="step">{StepsText.STEP2}</li>
+          <li className="step">{StepsText.STEP3}</li>
+          <li className="step">{StepsText.STEP4}</li>
         </ul>
       </div>
       <div className="mx-auto mt-8 w-full max-w-[600px]">
