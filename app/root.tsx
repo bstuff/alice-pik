@@ -25,8 +25,8 @@ import { getUser } from './utils/auth';
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: appStylesHref },
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
-  { rel: 'apple-touch-icon', href: '/images/favicon/web-clip.png' },
-  { rel: 'shortcut icon', href: '/images/favicon/32x32.png', type: 'image/x-icon' },
+  { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+  { rel: 'shortcut icon', href: '/favicon-96x96.png', type: 'image/x-icon' },
 ];
 
 export const meta: MetaFunction = () => {

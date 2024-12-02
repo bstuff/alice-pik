@@ -1,7 +1,13 @@
+import { ActionFunction, json } from '@remix-run/cloudflare';
 import { useEffect, useId, useRef, useState } from 'react';
 import { ContentContainer } from '~/components/ContentContainer';
 import { YA_OAUTH_CLIENT_ID } from '~/config';
 import { loadScript } from '~/utils/loadScript';
+import { routes } from '~/utils/routes';
+
+export const action = (() => {
+  return json(null);
+}) satisfies ActionFunction;
 
 export default function LoginPage() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -68,23 +74,55 @@ export default function LoginPage() {
 
   return (
     <ContentContainer>
-      <div className="text-center text-2xl">Login</div>
-      <div id={id} className="mt-8 w-full max-w-[600px]" />
+      <h1 className="pt-10 text-center text-2xl">Login</h1>
+      <div className="mx-auto mt-8 hidden w-full max-w-[600px] flex-col">
+        <form className="flex w-full flex-col gap-4 rounded bg-base-200 p-8">
+          <label className="input input-bordered flex items-center gap-2">
+            Username
+            <input
+              className="grow"
+              type="text"
+              name="login"
+              placeholder="email@yandex.com"
+              autoComplete="username"
+              required
+            />
+          </label>
+          <label className="input input-bordered flex items-center gap-2">
+            Password
+            <input
+              className="grow"
+              type="password"
+              name="password"
+              placeholder="Daisy"
+              autoComplete="password"
+              required
+            />
+          </label>
+          <button className="align-self-end btn btn-primary btn-md" type="submit">
+            Login
+          </button>
+        </form>
+      </div>
 
-      <form
-        className="hidden flex-col gap-2 bg-slate-50"
-        method="POST"
-        action="/login/ya/token"
-        ref={formRef}
-      >
-        <input name="access_token" defaultValue="" />
-        <input name="token_type" defaultValue="bearer" />
-        <input name="expires_in" defaultValue="" />
-        <input name="redirect" defaultValue="" />
-        <button>go</button>
-      </form>
+      <div className="mx-auto mt-8 w-full max-w-[600px]">
+        <div id={id} className="mt-8" />
 
-      <pre className="mt-4 w-full max-w-[600px]">{innerHtml}</pre>
+        <form
+          className="hidden flex-col gap-2 bg-slate-50"
+          method="POST"
+          action={routes.login.ya.token()}
+          ref={formRef}
+        >
+          <input name="access_token" defaultValue="" />
+          <input name="token_type" defaultValue="bearer" />
+          <input name="expires_in" defaultValue="" />
+          <input name="redirect" defaultValue="" />
+          <button>go</button>
+        </form>
+
+        <pre className="mt-4 w-full">{innerHtml}</pre>
+      </div>
     </ContentContainer>
   );
 }

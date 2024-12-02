@@ -25,7 +25,33 @@ export const routes = createRouting({
     query: {
       redirect: query('optional'),
     },
+    children: {
+      ya: {
+        ...segment`/ya`,
+        children: {
+          token: segment`/token`,
+        },
+      },
+    },
   },
+  logout: segment`/logout`,
+  oauth: {
+    ...segment`/oauth`,
+    children: {
+      ya: {
+        ...segment`/ya`,
+        children: {
+          token: {
+            ...segment`/token`,
+            query: {
+              redirect: query('optional'),
+            },
+          },
+        },
+      },
+    },
+  },
+  profile: segment`/profile`,
   services: {
     ...segment`/services`,
     children: {
@@ -33,6 +59,32 @@ export const routes = createRouting({
         ...segment`/pik`,
         children: {
           addUser: segment`/add-user`,
+        },
+      },
+    },
+  },
+  ya: {
+    ...segment`/ya`,
+    children: {
+      authorize: {
+        ...segment`/authorize`,
+      },
+      login: {
+        ...segment`/login`,
+        query: {
+          yaredirect: query('optional'),
+        },
+      },
+      devices: {
+        ...segment`/devices`,
+        query: {
+          yaredirect: query('optional'),
+        },
+      },
+      pik: {
+        ...segment`/pik`,
+        query: {
+          yaredirect: query('optional'),
         },
       },
     },

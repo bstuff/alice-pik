@@ -14,7 +14,12 @@ export default function Index() {
         <ContentContainer>
           <div>hi</div>
           {/* {user && <pre>{JSON.stringify(user, null, 2)}</pre>} */}
-          <Link className="btn btn-primary mt-4" to={user ? routes.services.pik() : routes.login()}>
+          <Link
+            className="btn btn-primary mt-4"
+            to={
+              user ? routes.services.pik() : routes.login({}, { redirect: routes.services.pik() })
+            }
+          >
             {'К сервисам ->'}
           </Link>
         </ContentContainer>

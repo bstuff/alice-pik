@@ -6,11 +6,13 @@ import { pikRelaysQuery, pikStoredRelaysQuery } from './pikIntercomsQuery';
 export const PikIntercoms: FC = () => {
   const data = useSuspenseQuery(pikRelaysQuery()).data;
   const storedRelays = useSuspenseQuery(pikStoredRelaysQuery()).data;
+  const knownRelaysIds = new Set(data.relays.map((it) => it.id));
+  const unknownStoredRelays = storedRelays.storedRelays.filter((it) => !knownRelaysIds.has(it.id));
 
   return (
     <div className="relative">
       <div className="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-4">
-        {data.relays.map((it) => (
+        {unknownStoredRelays.concat(data.relays).map((it) => (
           <PikIntercomCard
             key={it.id}
             relayId={it.id}
