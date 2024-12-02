@@ -11,6 +11,7 @@ import invariant from 'tiny-invariant';
 import { URL } from 'url';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyDevicesOauthBlock } from '~/components/EmptyDevicesOauthBlock';
+import { checkPikToken } from '~/pik-intercom/utils/checkPikToken';
 import { getPikToken } from '~/pik-intercom/utils/getPikToken';
 import { getUser } from '~/utils/auth';
 import { sha256 } from '~/utils/crypto';
@@ -57,6 +58,18 @@ export const loader = (async ({ request, context }) => {
   const pikToken = await getPikToken({ request, context });
 
   if (!pikToken) {
+    debug('No pik token. Redirecting.');
+
+    throw redirect(
+      routes.ya.pik(null, {
+        yaredirect: yaredirect,
+      }),
+    );
+  }
+
+  const validatedPikToken = await checkPikToken(pikToken);
+
+  if (!validatedPikToken) {
     debug('No pik token. Redirecting.');
 
     throw redirect(
@@ -139,12 +152,13 @@ export default function AuthorizePage() {
       </div>
 
       <div className="text-center">Приложение получит доступ к следующим устройствам:</div>
-      <div>
+
+      <div className="mt-6">
         <EmptyDevicesOauthBlock />
       </div>
 
       {/* или */}
-      <div className="flex items-center justify-center gap-2">
+      <div className="mt-6 flex items-center justify-center gap-2">
         <button
           className="btn btn-error btn-sm"
           onClick={() => {
