@@ -130,6 +130,8 @@ export default function YaPikPage() {
           </div>
         </form>
       </div>
+
+      <div className="h-6" />
     </ContentContainer>
   );
 }

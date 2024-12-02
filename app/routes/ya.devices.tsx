@@ -57,6 +57,8 @@ export default function YaPikPage() {
           </Suspense>
         </ClientOnly>
       </div>
+
+      <div className="h-6" />
     </ContentContainer>
   );
 }
