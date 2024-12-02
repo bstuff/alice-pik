@@ -7,6 +7,7 @@ import {
 } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
 import _debug from 'debug';
+import { Suspense } from 'react';
 import invariant from 'tiny-invariant';
 import { URL } from 'url';
 import { ContentContainer } from '~/components/ContentContainer';
@@ -14,6 +15,7 @@ import { EmptyDevicesOauthBlock } from '~/components/EmptyDevicesOauthBlock';
 import { checkPikToken } from '~/pik-intercom/utils/checkPikToken';
 import { getPikToken } from '~/pik-intercom/utils/getPikToken';
 import { getUser } from '~/utils/auth';
+import { ClientOnly } from '~/utils/ClientOnly';
 import { sha256 } from '~/utils/crypto';
 import { oauthCodeKvKey } from '~/utils/oauth';
 import { getQueryParams } from '~/utils/queryString';
@@ -154,13 +156,17 @@ export default function AuthorizePage() {
       <div className="text-center">Приложение получит доступ к следующим устройствам:</div>
 
       <div className="mt-6">
-        <EmptyDevicesOauthBlock />
+        <ClientOnly>
+          <Suspense fallback={null}>
+            <EmptyDevicesOauthBlock />
+          </Suspense>
+        </ClientOnly>
       </div>
 
       {/* или */}
       <div className="mt-6 flex items-center justify-center gap-2">
         <button
-          className="btn btn-error btn-sm"
+          className="btn btn-error btn-md"
           onClick={() => {
             fetch(routes.logout(), { method: 'POST' }).then(() => window.close());
           }}
@@ -168,7 +174,7 @@ export default function AuthorizePage() {
           Запретить
         </button>
         <form action="" method="POST">
-          <button className="btn btn-success btn-sm" type="submit">
+          <button className="btn btn-success btn-md" type="submit">
             Разрешить
           </button>
         </form>
