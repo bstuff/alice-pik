@@ -14,5 +14,11 @@ export async function unlockRelay(pikToken: string, relayId: number) {
   );
   const res = await fetch(headReq);
 
-  return res.json();
+  const resJson = await res.json();
+
+  if (typeof resJson === 'object' && resJson && 'error' in resJson) {
+    throw new Error(resJson.error as string);
+  }
+
+  return resJson;
 }
