@@ -1,3 +1,4 @@
+import invariant from 'tiny-invariant';
 import { COMMON_PIK_HEADERS } from './commonHeaders';
 
 export async function unlockRelay(pikToken: string, relayId: number) {
@@ -16,7 +17,9 @@ export async function unlockRelay(pikToken: string, relayId: number) {
 
   const resJson = await res.json();
 
-  if (typeof resJson === 'object' && resJson && 'error' in resJson) {
+  invariant(resJson && typeof resJson === 'object');
+
+  if ('error' in resJson) {
     throw new Error(resJson.error as string);
   }
 
