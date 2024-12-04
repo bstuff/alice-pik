@@ -1,7 +1,11 @@
 import { ActionFunction, json, TypedResponse } from '@remix-run/cloudflare';
+import { firstValueFrom, from, map, mergeMap, toArray } from 'rxjs';
 import { DeviceStateRequest, DeviceStateResponse } from '~/alice';
+import { NotFoundPikDevice } from '~/pik-intercom/devices/NotFoundPikDevice';
 import { PikDeviceCustomData, PikRelayDevice } from '~/pik-intercom/devices/PikRelayDevice';
+import { checkPikToken } from '~/pik-intercom/utils/checkPikToken';
 import { fetchStoredRelays } from '~/pik-intercom/utils/fetchStoredRelays';
+import { getPikToken } from '~/pik-intercom/utils/getPikToken';
 import { getUser } from '~/utils/auth';
 
 export const action = (async ({
@@ -12,6 +16,9 @@ export const action = (async ({
   if (!user) {
     throw new Response(null, { status: 401 });
   }
+  const pikToken = await getPikToken({ request, context });
+  // invariant(pikToken);
+  const isPikTokenValid = pikToken && (await checkPikToken(pikToken));
 
   // >>> {"devices":[{"id":"pik:relay:11111","custom_data":{"type":"relay"}}]}
   // console.log('>>>', JSON.stringify(reqJson));
@@ -25,17 +32,34 @@ export const action = (async ({
       return null;
     })
     .filter((it): it is number => !!it);
+  const knownRelays = await fetchStoredRelays({ request, context });
 
-  const relays = (await fetchStoredRelays({ request, context })).filter((it) =>
-    requestedIds.includes(it.id),
+  const r$ = from(requestedIds).pipe(
+    map((id) => {
+      const knownRelay = knownRelays.find((it) => it.id === id);
+      if (!knownRelay) {
+        return NotFoundPikDevice.fromId(id);
+      }
+
+      const door = PikRelayDevice.fromPikRelay(knownRelay);
+      if (isPikTokenValid) {
+        door.authHeader = pikToken ?? 'Bearer unknown';
+      }
+
+      return door;
+    }),
+    mergeMap((door) => {
+      const r = Promise.resolve().then(() => door.getState());
+
+      return from(r);
+    }),
+    toArray(),
   );
-
-  const doors = relays.map((it) => PikRelayDevice.fromPikRelay(it));
 
   const res: DeviceStateResponse = {
     request_id: request.headers.get('x-request-id') || '',
     payload: {
-      devices: [...doors.map((it) => it.getState())],
+      devices: await firstValueFrom(r$),
     },
   };
 

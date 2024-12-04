@@ -3,8 +3,10 @@ import {
   ActionResultErrorCode,
   ActionResultStatus,
   BaseDevice,
+  DeviceErrorCode,
   DeviceInterface,
   DeviceStateChangeResponse,
+  DeviceStateResponseDevice,
   DeviceType,
   OnOff,
 } from '~/alice';
@@ -34,6 +36,17 @@ export class PikRelayDevice extends BaseDevice {
     door.relayId = relay.id;
     door.capabilities.onOff = new OnOff(of(false), { retrievable: false });
     return door;
+  }
+
+  getState(): DeviceStateResponseDevice {
+    if (!this.authHeader) {
+      return {
+        id: this.id,
+        error_code: DeviceErrorCode.DEVICE_UNREACHABLE,
+      }
+    }
+
+    return super.getState();
   }
 
   async performChanges(

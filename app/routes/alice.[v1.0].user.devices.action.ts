@@ -1,7 +1,8 @@
 import { ActionFunction, json, TypedResponse } from '@remix-run/cloudflare';
-import { firstValueFrom, from, mergeMap, toArray } from 'rxjs';
+import { firstValueFrom, from, map, mergeMap, toArray } from 'rxjs';
 import invariant from 'tiny-invariant';
 import { CapabilityType, DeviceActionResponse, OnOffInstance, StateChangeRequest } from '~/alice';
+import { NotFoundPikDevice } from '~/pik-intercom/devices/NotFoundPikDevice';
 import { PikDeviceCustomData, PikRelayDevice } from '~/pik-intercom/devices/PikRelayDevice';
 import { fetchStoredRelays } from '~/pik-intercom/utils/fetchStoredRelays';
 import { getPikToken } from '~/pik-intercom/utils/getPikToken';
@@ -36,17 +37,20 @@ export const action = (async ({
     })
     .filter(filterBoolean);
   const requestedIds = requestedDevices.map((it) => it.id);
+  const knownRelays = await fetchStoredRelays({ request, context });
 
-  const relays = (await fetchStoredRelays({ request, context })).filter((it) =>
-    requestedIds.includes(it.id),
-  );
-  const doors = relays.map((it) => {
-    const door = PikRelayDevice.fromPikRelay(it);
-    door.authHeader = pikToken;
-    return door;
-  });
+  const r$ = from(requestedIds).pipe(
+    map((id) => {
+      const knownRelay = knownRelays.find((it) => it.id === id);
+      if (knownRelay) {
+        const door = PikRelayDevice.fromPikRelay(knownRelay);
+        door.authHeader = pikToken;
 
-  const r$ = from(doors).pipe(
+        return door;
+      }
+
+      return NotFoundPikDevice.fromId(id);
+    }),
     mergeMap((door) => {
       const r = Promise.resolve().then(() =>
         door.performChanges([
@@ -65,12 +69,10 @@ export const action = (async ({
     toArray(),
   );
 
-  const devicesResp = await firstValueFrom(r$);
-
   const res: DeviceActionResponse = {
     request_id: request.headers.get('x-request-id') || '',
     payload: {
-      devices: devicesResp,
+      devices: await firstValueFrom(r$),
     },
   };
 

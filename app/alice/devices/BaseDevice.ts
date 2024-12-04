@@ -1,5 +1,5 @@
 import { CapabilityInterface, DeviceInterface } from '../interfaces';
-import { CustomData, DeviceInfo, DeviceType } from '../types';
+import { CustomData, DeviceInfo, DeviceStateResponseDevice, DeviceType } from '../types';
 
 export abstract class BaseDevice implements DeviceInterface {
   readonly id: string;
@@ -34,7 +34,7 @@ export abstract class BaseDevice implements DeviceInterface {
     };
   }
 
-  getState() {
+  getState(): DeviceStateResponseDevice {
     return {
       id: this.id,
       capabilities: Object.values(this.capabilities).map((c) => c.getState()),
