@@ -69,12 +69,10 @@ export const action = (async ({
     toArray(),
   );
 
-  const devicesResp = await firstValueFrom(r$);
-
   const res: DeviceActionResponse = {
     request_id: request.headers.get('x-request-id') || '',
     payload: {
-      devices: devicesResp,
+      devices: await firstValueFrom(r$),
     },
   };
 

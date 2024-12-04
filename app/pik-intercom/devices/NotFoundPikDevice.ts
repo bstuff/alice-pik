@@ -2,7 +2,9 @@ import {
   ActionResultErrorCode,
   ActionResultStatus,
   BaseDevice,
+  DeviceErrorCode,
   DeviceStateChangeResponse,
+  DeviceStateResponseDevice,
   DeviceType,
 } from '~/alice';
 import { PikDeviceCustomData } from './PikRelayDevice';
@@ -34,6 +36,14 @@ export class NotFoundPikDevice extends BaseDevice {
         status: ActionResultStatus.ERROR,
         error_code: ActionResultErrorCode.DEVICE_NOT_FOUND,
       },
+    };
+  }
+
+  getState(): DeviceStateResponseDevice {
+    return {
+      id: this.id,
+      error_code: DeviceErrorCode.DEVICE_NOT_FOUND,
+      error_message: 'Устройство было отвязано'
     };
   }
 }
