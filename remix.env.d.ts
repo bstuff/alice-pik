@@ -23,7 +23,7 @@ declare module '@remix-run/server-runtime' {
       POSTHOG_KEY:string;
     };
     queryClient: QueryClient;
-    postHog: PostHog;
+    posthog: PostHog;
     waitUntil: (promise: Promise<unknown>) => void;
   }
 }
