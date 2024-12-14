@@ -4,6 +4,7 @@
 
 import '@remix-run/server-runtime';
 import type { QueryClient } from '@tanstack/react-query';
+import type { PostHog } from 'posthog-node';
 
 declare module '@remix-run/server-runtime' {
   export interface AppLoadContext {
@@ -16,8 +17,13 @@ declare module '@remix-run/server-runtime' {
       ADMIN_PASSWORD: string;
       ENVIRONMENT: 'production' | 'preview';
       JWT_SECRET: string;
+      YA_OAUTH_CLIENT_ID:string;
+      YA_OAUTH_CLIENT_SECRET:string;
+      POSTHOG_HOST:string;
+      POSTHOG_KEY:string;
     };
     queryClient: QueryClient;
+    postHog: PostHog;
     waitUntil: (promise: Promise<unknown>) => void;
   }
 }
