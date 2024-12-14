@@ -16,6 +16,7 @@ export const action = (async ({
   if (!user) {
     throw new Response(null, { status: 401 });
   }
+  context.posthog.capture({ event: 'Devices/Query', distinctId: 'devices_query' });
   const pikToken = await getPikToken({ request, context });
   // invariant(pikToken);
   const isPikTokenValid = pikToken && (await checkPikToken(pikToken));

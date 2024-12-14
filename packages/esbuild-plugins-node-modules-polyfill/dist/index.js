@@ -169,6 +169,12 @@ var nodeModulesPolyfillPlugin = /* @__PURE__ */ __name((options = {}) => {
       initialOptions.define['process.env.YA_OAUTH_CLIENT_SECRET'] = JSON.stringify(
         process.env.YA_OAUTH_CLIENT_SECRET ?? '',
       );
+      initialOptions.define['process.env.POSTHOG_HOST'] = JSON.stringify(
+        process.env.POSTHOG_HOST ?? '',
+      );
+      initialOptions.define['process.env.POSTHOG_KEY'] = JSON.stringify(
+        process.env.POSTHOG_KEY ?? '',
+      );
 
       initialOptions.inject = initialOptions.inject ?? [];
       if (globals.Buffer) {
