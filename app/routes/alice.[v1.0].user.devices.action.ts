@@ -21,7 +21,7 @@ export const action = (async ({
   const pikToken = await getPikToken({ request, context });
   invariant(pikToken);
 
-  context.posthog.capture({ event: 'Devices/Action', distinctId: 'devices_action' });
+  context.posthog.capture({ event: 'Devices/Action', distinctId: `ya:${user.uid}` });
 
   const reqJson = (await request.json()) as StateChangeRequest;
   // >>> {"payload":{"devices":[{"id":"pik:relay:40625","capabilities":[{"type":"devices.capabilities.on_off","state":{"instance":"on","value":true}}],"custom_data":{"_provider":"pik","type":"relay"}}]}}
