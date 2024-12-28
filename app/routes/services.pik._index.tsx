@@ -9,6 +9,15 @@ export const loader = (async ({ request, context }) => {
   if (!user) {
     throw new Response(null, { status: 401 });
   }
+
+  context.posthog.capture({
+    event: '$pageview',
+    distinctId: `ya:${user.uid}`,
+    properties: {
+      $current_url: '/services/pik',
+    },
+  });
+
   return null;
 }) satisfies LoaderFunction;
 
