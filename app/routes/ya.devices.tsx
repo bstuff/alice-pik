@@ -6,6 +6,7 @@ import { FC, Suspense } from 'react';
 import { ContentContainer } from '~/components/ContentContainer';
 import { PikIntercoms } from '~/pik-intercom/components/PikIntercoms/PikIntercoms';
 import { pikStoredRelaysQuery } from '~/pik-intercom/components/PikIntercoms/pikIntercomsQuery';
+import { getUser } from '~/utils/auth';
 import { ClientOnly } from '~/utils/ClientOnly';
 import { getQueryParams } from '~/utils/queryString';
 import { routes } from '~/utils/routes';
@@ -13,9 +14,18 @@ import { StepsText } from '~/utils/stepsText';
 
 const debug = _debug('app:routes:ya:devices');
 
-export const loader = (async ({ request }) => {
+export const loader = (async ({ request, context }) => {
   const params = getQueryParams<{ yaredirect?: string }>(request.url);
   debug('loader', request.url);
+
+  const user = await getUser({ request, context });
+  context.posthog.capture({
+    event: '$pageview',
+    distinctId: `ya:${user?.uid}`,
+    properties: {
+      $current_url: '/ya/devices'
+    }
+  });
 
   return json({ yaredirect: params.yaredirect });
 }) satisfies LoaderFunction;

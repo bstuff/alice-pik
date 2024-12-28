@@ -41,9 +41,18 @@ export const action = (async ({ request, context }) => {
   return json({ pikToken, error });
 }) satisfies ActionFunction;
 
-export const loader = (async ({ request }) => {
+export const loader = (async ({ request, context }) => {
   const params = getQueryParams<{ yaredirect?: string }>(request.url);
   debug('loader', request.url);
+
+  const user = await getUser({ request, context });
+  context.posthog.capture({
+    event: '$pageview',
+    distinctId: `ya:${user?.uid}`,
+    properties: {
+      $current_url: '/ya/pik'
+    }
+  });
 
   return json({ yaredirect: params.yaredirect });
 }) satisfies LoaderFunction;

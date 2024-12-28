@@ -47,6 +47,14 @@ export const loader = (async ({ request, context }) => {
   }
   invariant(user);
 
+  context.posthog.capture({
+    event: '$pageview',
+    distinctId: `ya:${user?.uid}`,
+    properties: {
+      $current_url: '/ya/authorize',
+    },
+  });
+
   if (params.response_type !== 'code') {
     throw json(
       {
