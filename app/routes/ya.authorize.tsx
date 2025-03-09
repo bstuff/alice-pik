@@ -161,20 +161,9 @@ export default function AuthorizePage() {
         Разрешить приложению "Умный дом с Алисой" управлять вашими устройствами?
       </div>
 
-      <div className="text-center">Приложение получит доступ к следующим устройствам:</div>
-
-      <div className="mt-6">
-        <ClientOnly>
-          <Suspense fallback={null}>
-            <EmptyDevicesOauthBlock />
-          </Suspense>
-        </ClientOnly>
-      </div>
-
-      {/* или */}
       <div className="mt-6 flex items-center justify-center gap-2">
         <button
-          className="btn btn-error btn-md"
+          className="btn btn-ghost btn-md"
           onClick={() => {
             fetch(routes.logout(), { method: 'POST' }).then(() => window.close());
           }}
@@ -186,6 +175,16 @@ export default function AuthorizePage() {
             Разрешить
           </button>
         </form>
+      </div>
+
+      <div className="mt-6 text-center">Приложение получит доступ к следующим устройствам:</div>
+
+      <div className="mt-6">
+        <ClientOnly>
+          <Suspense fallback={null}>
+            <EmptyDevicesOauthBlock />
+          </Suspense>
+        </ClientOnly>
       </div>
 
       <div className="h-6" />

@@ -24,12 +24,14 @@ export const EmptyDevicesOauthBlock: FC = () => {
         fill="none"
         viewBox="0 0 24 24"
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        />
+        {!hasDevices && (
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        )}
       </svg>
       {hasDevices && (
         <div className="relative flex w-full min-w-0 flex-1 flex-col gap-2">
@@ -45,11 +47,11 @@ export const EmptyDevicesOauthBlock: FC = () => {
               ))}
             </div>
           </div>
-          <span className="w-full">
+          {/* <span className="w-full">
             Если вам понадобится изменить список устройств, откройте приложение в браузере (ссылка в
             qr, если вы с мобильного телефона). После добавления устройств можно вернуться в Умный
             Дом и нажать кнопку "<b>обновить список устройств</b>".
-          </span>
+          </span> */}
         </div>
       )}
       {!hasDevices && (
@@ -60,7 +62,7 @@ export const EmptyDevicesOauthBlock: FC = () => {
           кнопку "<b>обновить список устройств</b>".
         </span>
       )}
-      <img src={imgQr} alt="" width={128} height={128} />
+      <img className="hidden" src={imgQr} alt="" width={128} height={128} />
     </div>
   );
 };
